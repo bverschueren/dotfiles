@@ -1,0 +1,27 @@
+*~
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# swap
+[._]*.sw[a-z]
+[._]sw[a-z]
+
+
+# log, output & test files
+*.out
+*.log
+*.test
+*.tmp
+
+# venv & vagrant
+.venv
+.vagrant/*
+
+# ansible
+*.retry
+.ansible
+
+# kubernetes
+.kube
+.minikube

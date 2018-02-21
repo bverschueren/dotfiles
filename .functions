@@ -1,0 +1,119 @@
+#!/bin/bash
+
+vpn(){
+	cd ~/vpn
+	local vpn_name=$1
+	vpn_bin=$(which openvpn)
+        sudo $vpn_bin ${vpn_name}
+	cd -
+}
+
+dataurl() {
+	local mimeType
+	mimeType=$(file -b --mime-type "$1")
+	if [[ $mimeType == text/* ]]; then
+		mimeType="${mimeType};charset=utf-8"
+	fi
+	echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')"
+}
+
+getcertinfo(){
+	if [ -z "${1}" ]; then
+		echo "ERROR: No domain specified."
+		return 1
+	fi
+
+	local domain="${1}"
+	local certText
+
+	if [[ -f ${domain} ]]; then
+		# if it's a local file, extract the names using OpenSSL
+                
+		certText=$(openssl x509 -noout -in ${domain} -text -startdate -enddate -certopt "no_header, no_serial, no_version, \
+                                no_signame, no_validity, no_issuer, no_pubkey, no_sigdump, no_aux")
+    else
+        # else we presume it's a remote https cert
+  		local tmp
+		tmp=$(echo -e "GET / HTTP/1.1\nEOT" \
+			| openssl s_client -connect "${domain}:443" 2>&1)
+
+		if [[ "${tmp}" = *"-----BEGIN CERTIFICATE-----"* ]]; then
+			certText=$(echo "${tmp}" \
+				| openssl x509 -text -startdate -enddate -certopt "no_header, no_serial, no_version, \
+				no_signame, no_validity, no_issuer, no_pubkey, no_sigdump, no_aux")
+		fi
+	fi
+
+    echo "Common Name:"
+	echo ""; # newline
+	echo "${certText}" | grep "Subject:" | sed -e "s/^.*CN=//"
+	echo ""; # newline
+	echo "Subject Alternative Name(s):"
+	echo ""; # newline
+	echo "${certText}" | grep -A 1 "Subject Alternative Name:" \
+		| sed -e "2s/DNS://g" -e "s/ //g" | tr "," "\n" | tail -n +2
+	echo ""; # newline
+    echo "Validity:"
+	echo ""; # newline
+    echo "${certText}" |grep -E "not(After|Before)=" \
+        | sed -e "s/^not\(After\|Before\)=//g" 
+	return 0
+}
+
+getcertmodulus(){
+	if [ -z "${1}" ]; then
+		echo "ERROR: No domain specified."
+		return 1
+	fi
+
+ 	local domain="${1}"
+    local fileType=$(file -b ${domain})
+    local prog
+
+	if [[ ! -f ${domain} ]]; then
+		echo No local file
+	fi
+
+    case $fileType in
+    *request*)
+       	prog=req
+		;;
+    *"private key"*)
+		prog=rsa
+		;;
+	*certificate*)
+		prog=x509
+		;;
+	*)
+		echo No valid file type
+		return 1
+		;;
+	esac
+	openssl ${prog} -modulus -noout -in ${domain} 
+}
+
+# `o` with no arguments opens the current directory, otherwise opens the given location
+o() {
+	if [ $# -eq 0 ]; then
+		xdg-open .	> /dev/null 2>&1
+	else
+		xdg-open "$@" > /dev/null 2>&1
+	fi
+}
+
+# Create a new directory and enter it
+mkd() {
+	mkdir -p "$@"
+	cd "$@" || exit
+}
+
+
+isup() {
+	local uri=$1
+
+	if curl -s --head  --request GET "$uri" | grep "200 OK" > /dev/null ; then
+		notify-send --urgency=critical "$uri is down"
+	else
+		notify-send --urgency=low "$uri is up"
+	fi
+}

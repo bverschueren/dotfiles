@@ -1,0 +1,43 @@
+# copy/paste stuff from cli
+alias pbcopy='xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
+
+# week number
+alias week='date +%V'
+
+# Intuitive map function
+# For example, to list all directories that contain a certain file:
+# find . -name .gitattributes | map dirname
+alias map="xargs -n1"
+
+# get pubip
+alias pubip="dig +short myip.opendns.com @resolver1.opendns.com"
+
+# sniff 
+alias sniff="sudo ngrep -d 'enp0s31f6' -t '^(GET|POST) ' 'tcp and port 80'"
+
+# send http requests
+for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
+	alias "$method"="lwp-request -m \"$method\""
+done
+
+# Pipe my public key to my clipboard.
+alias pubkey="cat ~/.ssh/id_rsa.pub | xclip -selection primary | notify-send 'Public key copied to pasteboard.'"
+
+# Add an "alert" alias for long running commands.  Use like so:
+#	sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Detect which `ls` flavor is in use
+if ls --color > /dev/null 2>&1; then # GNU `ls`
+    colorflag="--color"
+else # OS X `ls`
+    colorflag="-G"
+fi
+alias ls="command ls ${colorflag}"
+
+# Always enable colored `grep` output
+alias grep='grep --color=auto '
+
+# use ssh-client 7.5 deployed in /usr/local/
+#alias ssh="/usr/local/bin/ssh"

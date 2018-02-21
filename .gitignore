@@ -1,0 +1,14 @@
+*~
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+[._]*.sw[a-z]
+[._]sw[a-z]
+
+.extra
+.gnupg/*
+!.gnupg/gpg.conf
+!.gnupg/gpg-agent.conf
+.ssh/*
+!.ssh/config

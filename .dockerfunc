@@ -1,0 +1,95 @@
+#!/bin/bash
+# Bash wrappers for docker run commands
+
+#
+# Helper Functions
+#
+dcleanup(){
+	local containers
+	containers=( $(docker ps -aq 2>/dev/null) )
+	docker rm "${containers[@]}" 2>/dev/null
+	local volumes
+	volumes=( $(docker ps --filter status=exited -q 2>/dev/null) )
+	docker rm -v "${volumes[@]}" 2>/dev/null
+	local images
+	images=( $(docker images --filter dangling=true -q 2>/dev/null) )
+	docker rmi "${images[@]}" 2>/dev/null
+}
+
+del_stopped(){
+	local name=$1
+	local state
+	state=$(docker inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
+
+	if [[ "$state" == "false" ]]; then
+		docker rm "$name"
+	fi
+}
+
+ensure_volume(){
+    local volume_expected=$1
+    local volume_found
+    volume_found=$(docker volume inspect $volume_expected --format "{{ .Name }}" 2>/dev/null)
+
+    if [[  "$volume_found" != "$volume_expected" ]]; then
+        echo Creating volume $volume_expected
+        docker volume create "$volume_expected"
+    fi
+}
+#
+# Container Aliases
+#
+
+dgcloud(){
+    ensure_volume gcloud
+	docker run --rm \
+        --volume ~/.config/gcloud:/root/.config/gcloud \
+        --volume gcloud:/root \
+        --workdir /root \
+        google/cloud-sdk:alpine gcloud \
+        "$@"
+}
+
+dansible(){
+    local entrypoint=""
+    [[ ${FUNCNAME[*]} != "dansible" ]] && entrypoint="--entrypoint ${FUNCNAME[1]:1}"
+
+    docker run --rm \
+        ${extra_opts} \
+        --volume "${SSH_AUTH_SOCK}:/home/ansible/.ssh/ssh_auth_sock" \
+        --volume $(pwd):/home/ansible/ \
+        --env "SSH_AUTH_SOCK=/home/ansible/.ssh/ssh_auth_sock" \
+        --env "ANSIBLE_HOST_KEY_CHECKING=False" \
+        ${entrypoint} \
+        ${DOCKER_REPOSITORY}/ansible:latest \
+        "$@"
+    unset extra_opts
+}
+alias ansible=dansible
+
+dansible-playbook(){
+    [[ "$@" == *'ask'* ]] && extra_opts+=" -it "
+    dansible "$@"   
+}
+alias ansible-playbook=dansible-playbook
+
+dansible-vault(){
+    extra_opts+=" -it "
+    dansible "$@"
+}
+alias ansible-vault=dansible-vault
+
+dansible-galaxy(){
+    dansible "$@"
+}
+alias ansible-galaxy=dansible-galaxy
+
+dkubectl(){
+    docker run --rm \
+        --volume ~/.kube:/home/kubectl/.kube/ \
+        --volume ~/.minikube:/home/kubectl/.minikube \
+        --volume $(pwd):/home/kubectl \
+        ${DOCKER_REPOSITORY}/kubectl \
+        "$@"
+}
+alias kubectl=dkubectl
