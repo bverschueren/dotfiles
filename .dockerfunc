@@ -40,7 +40,7 @@ ensure_volume(){
 # Container Aliases
 #
 
-dgcloud(){
+_gcloud(){
     ensure_volume gcloud
 	docker run --rm \
         --volume ~/.config/gcloud:/root/.config/gcloud \
@@ -49,10 +49,11 @@ dgcloud(){
         google/cloud-sdk:alpine gcloud \
         "$@"
 }
+alias gcloud=_gcloud
 
-dansible(){
+_ansible(){
     local entrypoint=""
-    [[ ${FUNCNAME[*]} != "dansible" ]] && entrypoint="--entrypoint ${FUNCNAME[1]:1}"
+    [[ ${FUNCNAME[*]} != "_ansible" ]] && entrypoint="--entrypoint ${FUNCNAME[1]:1}"
 
     docker run --rm \
         ${extra_opts} \
@@ -65,26 +66,26 @@ dansible(){
         "$@"
     unset extra_opts
 }
-alias ansible=dansible
+alias ansible=_ansible
 
-dansible-playbook(){
+_ansible-playbook(){
     [[ "$@" == *'ask'* ]] && extra_opts+=" -it "
-    dansible "$@"   
+    _ansible "$@"   
 }
-alias ansible-playbook=dansible-playbook
+alias ansible-playbook=_ansible-playbook
 
-dansible-vault(){
+_ansible-vault(){
     extra_opts+=" -it "
-    dansible "$@"
+    _ansible "$@"
 }
-alias ansible-vault=dansible-vault
+alias ansible-vault=_ansible-vault
 
-dansible-galaxy(){
-    dansible "$@"
+_ansible-galaxy(){
+    _ansible "$@"
 }
-alias ansible-galaxy=dansible-galaxy
+alias ansible-galaxy=_ansible-galaxy
 
-dkubectl(){
+_kubectl(){
     docker run --rm \
         --volume ~/.kube:/home/kubectl/.kube/ \
         --volume ~/.minikube:/home/kubectl/.minikube \
@@ -92,4 +93,4 @@ dkubectl(){
         ${DOCKER_REPOSITORY}/kubectl \
         "$@"
 }
-alias kubectl=dkubectl
+alias kubectl=_kubectl
