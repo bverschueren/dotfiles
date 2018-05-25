@@ -7,6 +7,27 @@ set backspace=indent,eol,start  " Makes backspace key more powerful.
 set showcmd                     " Show me what I'm typing
 set showmode                    " Show current mode.
 
+" python
+au BufNewFile,BufRead *.py set tabstop=4
+au BufNewFile,BufRead *.py set softtabstop=4
+au BufNewFile,BufRead *.py set shiftwidth=4
+au BufNewFile,BufRead *.py set textwidth=79
+au BufNewFile,BufRead *.py set expandtab
+au BufNewFile,BufRead *.py set autoindent
+au BufNewFile,BufRead *.py set fileformat=unix
+
+set foldmethod=indent
+set foldlevel=99
+nnoremap <space> za
+
+" highlight scheme for trailing whitespace
+highlight BadWhitespace ctermbg=red guibg=red
+" ensure it doesn't get cleared by future colorscheme defenition
+" (http://vim.wikia.com/wiki/Highlight_unwanted_spaces#Highlighting_with_the_match_command)
+autocmd ColorScheme * highlight BadWhitespace ctermbg=red guibg=red
+" match whitespaces to the highlight
+match BadWhitespace /\s\+$/
+
 set incsearch                   " Shows the match while typing search pattern
 set hlsearch			        " Highlight found searches
 set ignorecase                  " Search case insensitive...
@@ -38,10 +59,6 @@ set autoindent                  " use previous the line's indent width
 set showmatch                   " jump to matching brace
 set complete-=i                 " do not scan include files. See https://medium.com/usevim/set-complete-e76b9f196f0f
 set smarttab                    " smarter bckspace for <tab>'s. http://vimdoc.sourceforge.net/htmldoc/options.html#'smarttab'
-
-set et							" convert <tab> to spaces
-set tabstop=4
-set shiftwidth=4
 
 " map pastetoggle
 set pastetoggle=<F2>
