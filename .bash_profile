@@ -1,5 +1,4 @@
 #!/bin/bash
-
 for file in ~/.{bash_prompt,aliases,functions,dockerfunc,extra}; do
 	if [[ -r "$file" ]] && [[ -f "$file" ]]; then
 		source "$file"
@@ -20,4 +19,10 @@ shopt -s cdspell
 [[ $(ls -1 ~/vpn/*.ovpn 2>/dev/null) ]] && complete -o "default" -o "nospace" -W "$(find ~/vpn/*.ovpn -printf "%f\n")" vpn
 
 # kubectl tab completion
-source <(kubectl completion bash)
+type kubectl 2>/dev/null && source <(kubectl completion bash)
+type oc 2>/dev/null && source <(oc completion bash)
+type openstack 2>/dev/null && source <(openstack complete)
+
+# golang env
+export GOBIN=$GOPATH/bin
+export PATH=$PATH:$GOPATH:$GOBIN:/usr/local/go/bin
