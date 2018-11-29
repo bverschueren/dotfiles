@@ -12,7 +12,7 @@ DOTFILES += ${HOME}/.gitignore ${HOME}/.ssh/config
 DISTRO=$(shell lsb_release -si)
 ifeq ($(DISTRO), Ubuntu)
 	INSTALLER=apt
-	DEPS=powerline fonts-powerline
+	DEPS=powerline fonts-powerline curl
 endif
 ifeq ($(DISTRO), Fedora)
 	INSTALLER=dnf
@@ -28,6 +28,8 @@ vim: ${HOME}/.vim
 	cd .vim
 	git submodule update --init --recursive
 	git submodule foreach git pull --recurse-submodules origin master
+	mkdir -p ${HOME}/.vim/autoload
+	curl -LSso ~/.vim/autoload/pathogen.vim https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim
 
 dotdirs: $(DOTDIRS)
 	$(DOTDIRS)
