@@ -28,7 +28,6 @@ getcertinfo(){
 
 	if [[ -f ${domain} ]]; then
 		# if it's a local file, extract the names using OpenSSL
-                
 		certText=$(openssl x509 -noout -in ${domain} -text -startdate -enddate -certopt "no_header, no_serial, no_version, \
                                 no_signame, no_validity, no_issuer, no_pubkey, no_sigdump, no_aux")
     else
@@ -115,5 +114,16 @@ isup() {
 		notify-send --urgency=critical "$uri is down"
 	else
 		notify-send --urgency=low "$uri is up"
+	fi
+}
+
+whereami() {
+	if test -n $OS_AUTH_URL; then
+		echo -ne "\e[31mopenstack:\t"
+		echo -e "\e[97m$OS_USERNAME@$(echo $OS_AUTH_URL|sed -nr 's|https?://([a-z.]+).*|\1|p'):$OS_PROJECT_NAME\033[0m"
+	fi
+	if type kubectl &>/dev/null; then
+		echo -ne "\e[34mkubernetes:\t"
+		echo -e "\e[97m$(kubectl config current-context)\033[0m"
 	fi
 }
