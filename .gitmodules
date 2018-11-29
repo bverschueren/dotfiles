@@ -1,22 +1,22 @@
 [submodule ".vim/bundle/tmuxline.vim"]
 	path = .vim/bundle/tmuxline.vim
-	url = git@github.com:edkolev/tmuxline.vim.git
+	url = https://github.com:edkolev/tmuxline.vim.git
 	branch = master
 [submodule ".vim/bundle/vim-airline"]
 	path = .vim/bundle/vim-airline
-	url = git@github.com:vim-airline/vim-airline.git
+	url = https://github.com:vim-airline/vim-airline.git
 	branch = master
 [submodule ".vim/bundle/vim-airline-themes"]
 	path = .vim/bundle/vim-airline-themes
-	url = git@github.com:vim-airline/vim-airline-themes.git
+	url = https://github.com:vim-airline/vim-airline-themes.git
 	branch = master
 [submodule ".vim/bundle/vim-colors-solarized"]
 	path = .vim/bundle/vim-colors-solarized
-	url = git://github.com/altercation/vim-colors-solarized.git
+	url = https://github.com/altercation/vim-colors-solarized.git
 	branch = master
 [submodule ".vim/bundle/base16-vim"]
 	path = .vim/bundle/base16-vim
-	url = git@github.com:chriskempson/base16-vim.git
+	url = https://github.com:chriskempson/base16-vim.git
 	branch = master
 [submodule ".vim/bundle/vim-go"]
 	path = .vim/bundle/vim-go
