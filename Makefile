@@ -37,12 +37,6 @@ dotdirs: $(DOTDIRS)
 $(DOTDIRS):: ${HOME}/%: ${PWD}/%
 	ln -sf $< $@
 
-${HOME}/.config:: ${HOME}/%
-	@echo $(basename $@)
-	for dir in $(shell find $(CURDIR) -maxdepth 1 -mindepth 1 -type d -path $<)
-		echo test -d ${HOME}/$$dir || mkdir ${HOME}/$$dir; \
-	done; \
-
 dotfiles: $(DOTFILES)
 #	git update-index --skip-worktree $(CURDIR)/.gitconfig
 

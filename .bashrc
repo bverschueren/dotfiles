@@ -18,11 +18,15 @@ shopt -s cdspell
 # tab competion for vpn alias
 [[ $(ls -1 ~/vpn/*.ovpn 2>/dev/null) ]] && complete -o "default" -o "nospace" -W "$(find ~/vpn/*.ovpn -printf "%f\n")" vpn
 
-# kubectl tab completion
-type kubectl 2>/dev/null && source <(kubectl completion bash)
-type oc 2>/dev/null && source <(oc completion bash)
-type openstack 2>/dev/null && source <(openstack complete)
+# common tool tab completion
+type kubectl &>/dev/null && source <(kubectl completion bash)
+type oc &>/dev/null && source <(oc completion bash)
+type openstack &>/dev/null && source <(openstack complete)
+
+type most &>/dev/null && export PAGER=most
+type fzf &>/dev/null && source /usr/share/fzf/shell/key-bindings.bash && _gen_fzf_default_opts
 
 # golang env
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOPATH:$GOBIN:/usr/local/go/bin
+
