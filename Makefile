@@ -19,7 +19,7 @@ ifeq ($(DISTRO), Fedora)
 	DEPS=powerline powerline-fonts
 endif
 
-.PHONY: all dotfiles vim test
+.PHONY: all dotfiles vim test gnome
 all: dotfiles vim
 
 vim: ${HOME}/.vim
@@ -53,3 +53,28 @@ $(DOTFILES):: ${HOME}/%: ${PWD}/%
 ${HOME}/.gitignore::
 	ln -sf ${CURDIR}/gitignore $@
 
+gnome: shell-button-bg
+	sudo $(INSTALLER) install -y gnome-icon-theme
+
+shell-button-bg:
+	# remove panel button background on XO_Catalina
+	sed -i '/#panel .panel-button:active, #panel .panel-button:overview, #panel .panel-button:focus, #panel .panel-button:checked {/,/}/{s/background-color: #0e6bff;//g}' /usr/share/themes/XO_Catalina/gnome-shell/gnome-shell.css
+
+.PHONY:
+lockscreen-login-box:
+	sudo sed -i '/.login-dialog-user-list:expanded .login-dialog-user-list-item:selected {/,/}/{s/background-color: .*/background-color: #0E4D92;/g}' /usr/share/gnome-shell/theme/ubuntu.css
+
+lockscreen-blurred: LOCKSCREEN=/usr/share/backgrounds/lockscreen-blurred$(suffix $(shell gsettings get org.gnome.desktop.background picture-uri|tr -d \'))
+
+.PHONY:
+lockscreen-blurred:
+	sudo convert $(shell gsettings get org.gnome.desktop.background picture-uri) \
+                -blur "0x5" \
+                $(LOCKSCREEN)
+	@sudo sed -i '/#lockDialogGroup {/,/}/c \
+                #lockDialogGroup { \
+                background: #0E4D92 url(file://$(LOCKSCREEN)); \
+                background-repeat: no-repeat; \
+                background-size: cover; \
+                background-position: center; \
+                }' /usr/share/gnome-shell/theme/ubuntu.css
