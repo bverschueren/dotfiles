@@ -77,4 +77,4 @@ lockscreen-blurred:
                 background-repeat: no-repeat; \
                 background-size: cover; \
                 background-position: center; \
-                }' /usr/share/gnome-shell/theme/ubuntu.css
+                }' /usr/share/gnome-shell/theme/gnome-shell.css
