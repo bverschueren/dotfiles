@@ -64,13 +64,14 @@ shell-button-bg:
 lockscreen-login-box:
 	sudo sed -i '/.login-dialog-user-list:expanded .login-dialog-user-list-item:selected {/,/}/{s/background-color: .*/background-color: #0E4D92;/g}' /usr/share/gnome-shell/theme/ubuntu.css
 
-lockscreen-blurred: LOCKSCREEN=/usr/share/backgrounds/lockscreen-blurred$(suffix $(shell gsettings get org.gnome.desktop.background picture-uri|tr -d \'))
+LOCKSCREEN=/usr/share/backgrounds/lockscreen-blurred$(suffix $(shell gsettings get org.gnome.desktop.background picture-uri|tr -d \'))
 
-.PHONY:
-lockscreen-blurred:
+$(LOCKSCREEN):
 	sudo convert $(shell gsettings get org.gnome.desktop.background picture-uri) \
                 -blur "0x5" \
                 $(LOCKSCREEN)
+
+lockscreen-blurred: $(LOCKSCREEN)
 	@sudo sed -i '/#lockDialogGroup {/,/}/c \
                 #lockDialogGroup { \
                 background: #0E4D92 url(file://$(LOCKSCREEN)); \
