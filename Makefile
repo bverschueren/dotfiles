@@ -18,13 +18,16 @@ ifeq ($(DISTRO), Fedora)
 	INSTALLER=dnf
 	DEPS=powerline powerline-fonts
 endif
+ifeq ($(DISTRO), RedHatEnterprise)
+	ENABLE=echo
+endif
 
 .PHONY: all dotfiles vim test
 all: dotfiles vim
 
 vim: ${HOME}/.vim
 	@echo "setting up git"
-	sudo $(INSTALLER) install -y $(DEPS)
+	$(ENABLE) sudo $(INSTALLER) install -y $(DEPS)
 	cd .vim
 	git submodule update --init --recursive
 	git submodule foreach git pull --recurse-submodules origin master

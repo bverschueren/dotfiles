@@ -27,6 +27,5 @@ type most &>/dev/null && export PAGER=most
 type fzf &>/dev/null && source /usr/share/fzf/shell/key-bindings.bash && _gen_fzf_default_opts
 
 # golang env
-export GOBIN=$GOPATH/bin
-export PATH=$PATH:$GOPATH:$GOBIN:/usr/local/go/bin
-
+export GOBIN=$(go env GOPATH)/bin
+export PATH=$PATH:/usr/local/go/bin:$GOBIN

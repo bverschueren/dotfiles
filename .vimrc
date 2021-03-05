@@ -16,6 +16,9 @@ au BufNewFile,BufRead *.py set expandtab
 au BufNewFile,BufRead *.py set autoindent
 au BufNewFile,BufRead *.py set fileformat=unix
 
+" yaml
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+
 set foldmethod=indent
 set foldlevel=99
 nnoremap <space> za
